@@ -6,13 +6,15 @@ import Divider from "@material-ui/core/Divider";
 import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
+    position: fixed;
+    top: 0;
     width: 100%;
     height: 64px;
     background-color: white;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-: 
+    z-index: 1;
 `
 
 const ButtonGroup = styled.div`
