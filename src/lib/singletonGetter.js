@@ -1,4 +1,4 @@
-export default constructor => {
+const singletonGetter = constructor => {
     let instance;
     return () => {
         if (!instance) {
@@ -6,4 +6,6 @@ export default constructor => {
         }
         return instance;
     }
-}
+};
+
+export default singletonGetter
