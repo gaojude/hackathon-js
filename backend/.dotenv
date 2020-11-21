@@ -1,0 +1,2 @@
+MONGO_DB="mongodb+srv://admin:i8MwpuJqHOv63UiT@cluster0.muod4.mongodb.net/test"
+ENV=DEV
