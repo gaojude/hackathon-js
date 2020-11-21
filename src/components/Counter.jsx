@@ -2,12 +2,8 @@ import React from 'react';
 import {makeAutoObservable} from "mobx";
 import {observer} from "mobx-react";
 import singletonGetter from "../lib/singletonGetter";
-import CardContent from '@material-ui/core/CardContent';
-import Card from '@material-ui/core/Card';
-
-import { Button } from '@material-ui/core';
+import {Button, Card, Typography, CardContent, Container} from '@material-ui/core';
 import styled from 'styled-components';
-import Typography from "@material-ui/core/Typography";
 
 class ViewState {
     static get = singletonGetter(ViewState)
@@ -18,9 +14,9 @@ class ViewState {
     increment = () => ++this.counter;
     decrement = () => --this.counter;
 }
-const Wrapper = styled.div`
-    width: 30%;
-`
+const Wrapper = styled(Container).attrs({
+    maxWidth: "sm"
+})``
 
 const Counter = () => {
     const { counter, increment, decrement } = ViewState.get();
@@ -32,8 +28,8 @@ const Counter = () => {
                         { counter }
                     </Typography>
                     <br/>
-                    <Button variant="contained" onClick={increment}>Increment</Button>
                     <Button variant="contained" onClick={decrement}>Decrement</Button>
+                    <Button variant="contained" onClick={increment}>Increment</Button>
                 </CardContent>
             </Card>
         </Wrapper>
