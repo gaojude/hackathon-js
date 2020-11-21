@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Button from "@material-ui/core/Button";
 import {Spacer} from "./Layouts/Spacer";
 import Divider from "@material-ui/core/Divider";
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
     width: 100%;
@@ -26,8 +27,10 @@ const StyledButton = styled(Button)`
     color: #316186 !important;
 `
 
-export const Navbar = () =>
-    <Wrapper>
+export const Navbar = () => {
+    const history = useHistory();
+
+    return <Wrapper>
         <ButtonGroup>
             <Divider orientation="vertical" flexItem/>
             <Spacer width={8}/>
@@ -35,7 +38,8 @@ export const Navbar = () =>
             <Spacer width={8}/>
             <StyledButton variant="outlined">Sign up</StyledButton>
             <Spacer width={8}/>
-            <StyledButton variant="outlined">Demo</StyledButton>
+            <StyledButton variant="outlined" onClick={() => history.push('/home')}>Demo</StyledButton>
             <Spacer width={16}/>
         </ButtonGroup>
     </Wrapper>
+}
