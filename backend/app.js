@@ -14,16 +14,9 @@ setupRoutes(app);
 const HTTP_PORT = process.env.ENV === "PROD" ? 80 : 5000;
 const HTTPS_PORT = process.env.ENV === "PROD" ? 443 : 5001;
 
-http
-  .createServer(function (req, res) {
-    if (process.env.ENV === "PROD") {
-      res.writeHead(301, {
-        Location: "https://" + req.headers["host"] + req.url,
-      });
-      res.end();
-    }
-  }, app)
-  .listen(HTTP_PORT);
+http.createServer(app).listen(HTTP_PORT, () => {
+  console.log(`HTTP Server running on port ${HTTP_PORT}`);
+});
 if (process.env.ENV === "PROD") {
   https.createServer(getHttpsCredentials(), app).listen(HTTPS_PORT, () => {
     console.log(`HTTPS Server running on port ${HTTPS_PORT}`);

@@ -1,6 +1,7 @@
 const signUpRouter = require("express").Router();
-const { signUp } = require("../database/login");
+const { signUp } = require("../database/signup");
 signUpRouter.route("/signup").post((req, res) => {
+  console.log(req);
   if (!req.body) {
     res.status(401).send();
     return;
