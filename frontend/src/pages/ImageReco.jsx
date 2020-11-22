@@ -24,6 +24,61 @@ class ViewState {
     }
 }
 
+const blackList = [
+    '$',
+    'Deposit',
+    'grocery',
+    'total'
+]
+const parseTable = (table) => {
+    let retVal = []
+
+    console.log(table.cells)
+    for (const i in table.cells) {
+        const x = table.cells[i];
+        if (x.hasOwnProperty('label') &&
+            x.label === 'Description' &&
+            x.hasOwnProperty('text') &&
+            x.hasOwnProperty('score') &&
+            !blackList.some((a) => x.text.toUpperCase().includes(a.toUpperCase()))
+        ) {
+            retVal.push({
+                name: x.text,
+                score: x.score
+            });
+        }
+    }
+
+    console.log(retVal)
+
+    return retVal;
+}
+
+const parseData = (toParse) => {
+    let resultMap = {
+        items: [],
+    };
+
+    if (toParse.result && toParse.result[0] !== undefined) {
+        const result =  toParse.result[0];
+        if (result === undefined || !result.hasOwnProperty('prediction')) { return; }
+        const predictions = result.prediction;
+
+        for (const x of predictions) {
+            if (x.hasOwnProperty('label')) {
+                if (x.label === 'Merchant_Name' && x.hasOwnProperty('ocr_text')) {
+                    resultMap.merchantName = x.ocr_text
+                } else if (x.hasOwnProperty('type') && x.type === 'table') {
+                    result.items = parseTable(x);
+                }
+            }
+        }
+
+        console.log(resultMap) ;
+
+    }
+}
+
 const ImageRecognitionPageInner = () => {
     const [isLoading, setIsLoading] = useState(false);
 
@@ -70,7 +125,7 @@ const ImageRecognitionPageInner = () => {
                     if (result.message.includes('try again')) {
                         setTimeout(() => fetchInference(fileID), 5000);
                     } else {
-                        setIsLoading(true);
+                        setIsLoading(false);
                         return result;
                     }
                 })
@@ -81,14 +136,12 @@ const ImageRecognitionPageInner = () => {
     }
 
     const renderProgress = () => {
-        if (!ViewState.get().inferenceResponse) { return <div>UNDEFINED</div>; }
+        if (!ViewState.get().inferenceResponse) { return isLoading && <CircularProgress/> }
         return ViewState.get().inferenceResponse.case({
+            pending: (_) => <CircularProgress/>,
             fulfilled: t => {
-                return <div>FULLFILLED</div>
+                return isLoading ? <CircularProgress/> : <div>{JSON.stringify(t)}</div>
             },
-            pending: t => {
-                return <div>PENDING</div>
-            }
         })
     }
 
