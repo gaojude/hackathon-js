@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button";
 import { Spacer } from "./Layouts/Spacer";
 import Divider from "@material-ui/core/Divider";
 import { useHistory } from "react-router-dom";
-//const CurrentUserState = require("../lib/CurrentUserState");
+import CurrentUserState from "../lib/CurrentUserState";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -31,15 +31,15 @@ const StyledButton = styled(Button)`
   color: #316186 !important;
 `;
 
-export const Navbar = () => {
+const Navbar = () => {
   const history = useHistory();
-  const setLoggedIn = false;
+  const { loggedInState } = CurrentUserState.get();
   return (
     <Wrapper>
       <ButtonGroup>
         <Divider orientation="vertical" flexItem />
         <Spacer width={8} />
-        {!setLoggedIn ? (
+        {!loggedInState ? (
           <>
             <Button onClick={() => history.push("/login")}>Log in</Button>
             <Spacer width={8} />
@@ -49,7 +49,7 @@ export const Navbar = () => {
             >
               Sign up
             </StyledButton>
-            <Spacer width={8} />)
+            <Spacer width={8} />
           </>
         ) : (
           <Button onClick={() => history.push("/home")}>Log Out</Button>
@@ -62,3 +62,5 @@ export const Navbar = () => {
     </Wrapper>
   );
 };
+
+export default observer(Navbar);
