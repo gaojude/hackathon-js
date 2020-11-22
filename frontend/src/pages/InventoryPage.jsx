@@ -15,6 +15,7 @@ import MaterialTable from "material-table";
 import CurrentUserState from "../lib/CurrentUserState";
 import {BACK_END_URL} from "../consts/constants";
 import axios from "axios";
+import {InventoryStore} from "../lib/InventoryStore";
 
 const InventoryPage = () => {
     const {loggedInState, userId} = CurrentUserState.get();
@@ -56,15 +57,13 @@ const InventoryPage = () => {
     };
 
     async function fetchData() {
-        const {data} = await axios.post(`${BACK_END_URL}/inventory/list-all`, {
-            userId,
-        });
+        const data = await InventoryStore.get().fetchInventory()
         setData(data);
     }
 
     useEffect(() => {
         if (!data) fetchData();
-    }, [data, userId]); // Or [] if effect doesn't need props or state
+    }, [userId]); // Or [] if effect doesn't need props or state
 
     return (
         <div>
@@ -81,10 +80,12 @@ const InventoryPage = () => {
                         if (quantity === 0) {
                             await axios.delete(`${BACK_END_URL}/inventory`, {data: {userId, id: _id}});
                             dataUpdate.splice(index, 1);
+                            InventoryStore.get().setItems([...dataUpdate])
                             setData([...dataUpdate]);
                         }
                         else {
                             await axios.patch(`${BACK_END_URL}/inventory`, {userId, id: _id, quantity})
+                            InventoryStore.get().setItems([...dataUpdate])
                             setData([...dataUpdate]);
                         }
                     },
@@ -94,6 +95,7 @@ const InventoryPage = () => {
                         dataDelete.splice(index, 1);
                         const {_id, userId} = oldData;
                         await axios.delete(`${BACK_END_URL}/inventory`, {data: {userId, id: _id}})
+                        InventoryStore.get().setItems([...dataDelete])
                         setData([...dataDelete]);
                     }
                 }}

@@ -9,11 +9,13 @@ import {HomePage} from "./pages/HomePage";
 import Navbar from "./components/Navbar";
 import {ImageRecognitionPage} from "./pages/ImageReco";
 import RecipesGenerator from "./pages/RecipesGenerator";
+import {Spacer} from "./components/Layouts/Spacer";
 
 const App = (
     <>
         <Router>
             <Navbar/>
+            <Spacer height={24} />
             <div className={"app"}>
                 <Route path={"/login"} component={LogInPage}/>
                 <Route path={"/sign-up"} component={SignUpPage}/>
