@@ -87,13 +87,11 @@ const LogInPage = () => {
                                 type="password"
                                 autoComplete="current-password"
                             />
+                            <Spacer height={32}/>
+                            <Button variant="contained" color="primary" type="submit">Sign In!</Button>
                         </StyledColumn>
                     </form>
                 </CardContent>
-                <Spacer height={16}/>
-                <CardActions style={{display: 'flex', justifyContent: 'center'}}>
-                    <Button variant="contained" color="primary" type="submit">Sign In!</Button>
-                </CardActions>
                 <Spacer height={16}/>
             </Card>
         </Wrapper>
