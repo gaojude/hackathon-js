@@ -9,7 +9,7 @@ export default class CurrentUserState {
   constructor() {
     makeAutoObservable(this);
     const session = JSON.parse(localStorage.getItem("session"));
-    if (session) this.setLoggedIn(session.isSignedIn, session.userID);
+    if (session) this.setLoggedIn(session.isSignedIn, session.userId);
   }
 
   setLoggedIn = (loggedIn, uId) => {
@@ -17,7 +17,7 @@ export default class CurrentUserState {
     this.userId = uId;
     localStorage.setItem(
       "session",
-      JSON.stringify({ isSignedIn: loggedIn, userID: uId })
+      JSON.stringify({ isSignedIn: loggedIn, userId: uId })
     );
   };
 }

@@ -61,7 +61,7 @@ const Navbar = () => {
           </>
         ) : (
             <>
-              {CurrentUserState.get().userID}
+              {CurrentUserState.get().userId}
               <Button onClick={() => setLoggedIn(false, null)}>Log Out</Button>
             </>
         )}

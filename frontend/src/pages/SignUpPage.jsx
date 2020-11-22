@@ -4,7 +4,7 @@ import {Helmet} from "react-helmet";
 import CurrentUserState from "../lib/CurrentUserState";
 import {observer} from "mobx-react";
 import {useHistory} from "react-router-dom";
-import {BACK_END_URL, SIGN_UP} from "../consts/constants";
+import {BACK_END_URL} from "../consts/constants";
 import axios from 'axios'
 
 const SignUpPage = () => {
