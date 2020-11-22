@@ -1,13 +1,14 @@
 const signUpRouter = require("express").Router();
 const { signUp } = require("../database/signup");
-signUpRouter.route("/signup").post((req, res) => {
-  console.log(req);
-  if (!req.body) {
-    res.status(401).send();
+signUpRouter.route("/signup").post(async (req, res) => {
+  if (!req.body) return res.status(401).send();
+  const { name, email, password } = req.body;
+  signUp(name.trim(), email.trim(), password.trim());
+  const person = await login(email.trim(), password.trim());
+  if (person) {
+    res.send({ name: person.name, email, success: true, _id: person._id });
     return;
   }
-  const { name, email, password } = req.body;
-  signUp(name, email, password);
-  res.send({ name, email });
+  res.send({ success: false });
 });
 module.exports = signUpRouter;
