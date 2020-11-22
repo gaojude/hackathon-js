@@ -4,8 +4,9 @@ import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import { Spacer } from "./Layouts/Spacer";
 import Divider from "@material-ui/core/Divider";
-import { useHistory } from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import CurrentUserState from "../lib/CurrentUserState";
+import Avatar from "@material-ui/core/Avatar";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -15,7 +16,7 @@ const Wrapper = styled.div`
   background-color: white;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   z-index: 1;
 `;
 
@@ -31,11 +32,18 @@ const StyledButton = styled(Button)`
   color: #316186 !important;
 `;
 
+const StyledAvatar = styled(Avatar)`
+    margin-left: 16px;
+`
+
 const Navbar = () => {
   const history = useHistory();
   const { loggedInState, setLoggedIn } = CurrentUserState.get();
   return (
     <Wrapper>
+        <Link to="/">
+            <StyledAvatar alt="Remy Sharp" src="/assets/appicon.png"/>
+        </Link>
       <ButtonGroup>
         <Divider orientation="vertical" flexItem />
         <Spacer width={8} />
