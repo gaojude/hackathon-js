@@ -1,8 +1,10 @@
 import {Helmet} from "react-helmet";
-import React from "react";
-import {observable, reaction} from "mobx";
+import React, {useState} from "react";
+import {makeAutoObservable, observable, reaction} from "mobx";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {fromPromise} from 'mobx-utils';
+import singletonGetter from '../lib/singletonGetter'
+import {observer} from 'mobx-react'
 
 // xhr.open("POST", "https://app.nanonets.com/api/v2/OCR/Model/{{model_id}}/LabelFile/?async=true");
 //url : 'https://app.nanonets.com/api/v2/Inferences/Model/{{model_id}}/ImageLevelInferences/{{id}}',
@@ -11,19 +13,22 @@ const modalID = '0b57a751-2753-4859-b71a-41eb1d14d5a0';
 const url = `https://app.nanonets.com/api/v2/OCR/Model/${modalID}`;
 const inference_url = `https://app.nanonets.com/api/v2/Inferences/Model/${modalID}`;
 
-export class ImageRecognitionPage extends React.Component {
-    inferenceResponse = observable({response: undefined});
+class ViewState {
+    static get = singletonGetter(ViewState)
+    inferenceResponse;
+    setInferenceResponse(response) {
+        this.inferenceResponse = response;
+    }
+    constructor() {
+        makeAutoObservable(this)
+    }
+}
 
-    isLoading = observable(false);
+const ImageRecognitionPageInner = () => {
+    const [isLoading, setIsLoading] = useState(false);
 
-    sadas = reaction(
-        ()=> this.inferenceResponse.response,
-        r => console.log(r),
-        {fireImmediately: true}
-    )
-
-    handleChange = async (e) => {
-        this.isLoading = true;
+    const handleChange = async (e) => {
+        setIsLoading(true);
         const fileBLob = e.target.files[0];
 
         if (!fileBLob) { return; }
@@ -48,11 +53,11 @@ export class ImageRecognitionPage extends React.Component {
                 console.error('Error:', error);
             });
 
-        this.fetchInference(result[0].id);
+        fetchInference(result[0].id);
     }
 
-    fetchInference = (fileID) => {
-        this.inferenceResponse.response = fromPromise(
+    const fetchInference = (fileID) => {
+        ViewState.get().setInferenceResponse(fromPromise(
             fetch(`${inference_url}/ImageLevelInferences/${fileID}`, {
                 method: 'GET',
                 mode: 'cors',
@@ -63,33 +68,30 @@ export class ImageRecognitionPage extends React.Component {
                 .then(response => response.json())
                 .then(result => {
                     if (result.message.includes('try again')) {
-                        setTimeout(() => this.fetchInference(fileID), 5000);
+                        setTimeout(() => fetchInference(fileID), 5000);
                     } else {
-                        this.isLoading = true;
+                        setIsLoading(true);
                         return result;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 })
-        );
+        ))
     }
 
-    renderProgress = () => {
-        if (!this.inferenceResponse.response) { return; }
-        return this.inferenceResponse.response.case({
+    const renderProgress = () => {
+        if (!ViewState.get().inferenceResponse) { return <div>UNDEFINED</div>; }
+        return ViewState.get().inferenceResponse.case({
             fulfilled: t => {
-                console.log(t)
-                return <div>{t}</div>
+                return <div>FULLFILLED</div>
             },
             pending: t => {
-                console.log('dsjdisjdi')
+                return <div>PENDING</div>
             }
         })
     }
 
-
-    render() {
         return <>
             <Helmet>
                 <meta charSet="utf-8" />
@@ -100,11 +102,11 @@ export class ImageRecognitionPage extends React.Component {
                     id="upload-photo"
                     name="upload-photo"
                     type="file"
-                    onChange={this.handleChange}
+                    onChange={handleChange}
                 />
             </div>
-            { this.renderProgress() }
+            { renderProgress() }
         </>
-    }
-
 }
+
+export const ImageRecognitionPage = observer(ImageRecognitionPageInner);
