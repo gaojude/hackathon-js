@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const accountSchema = new mongoose.Schema({
-  name: 'string',
-  email: 'string',
-  password: 'string',
-});
-const Account = mongoose.model('Account', accountSchema);
+const Account = mongoose.model('Account', new mongoose.Schema({
+  name: String,
+  email: String,
+  password: String,
+}));
+
+const Inventory = mongoose.model('Inventory', new mongoose.Schema({
+  name: String,
+  userId: String,
+  quantity: Number,
+  image: String,
+}));
 
 const signUp = (email, password, name) => {
   const newUser = new Account({ name, email, password });
@@ -16,4 +22,4 @@ const signUp = (email, password, name) => {
   return true;
 };
 
-module.exports = { signUp };
+module.exports = { signUp, Account, Inventory };
