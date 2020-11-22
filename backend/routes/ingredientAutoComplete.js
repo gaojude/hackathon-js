@@ -1,6 +1,5 @@
-const unirest = require('unirest');
 const {RecipeApiHeader} = require("../api/recipe.api.config");
-const apiRequest = unirest('GET', 'https://webknox-recipes.p.rapidapi.com/food/ingredients/autocomplete');
+const unirest = require('unirest')
 
 /*
     interface AutoCompleteIngredientRequest {
@@ -20,20 +19,20 @@ ingredientAutoComplete
         if (!routeRequest.body.ingredientPartialName) {
             routeResponse.status(400).send()
         }
-
-        apiRequest.query({
-            query: routeRequest.body.ingredientPartialName,
-        });
-
-        apiRequest.headers(RecipeApiHeader);
-
-        const PREFIX = `https://spoonacular.com/cdn/ingredients_500x500/`;
-
-        apiRequest.end(function (res) {
-            if (res.error) throw new Error(res.error);
-            const prefixAttached = res.body.map(({image, ...rest}) => ({...rest, imageUrl: PREFIX + image}));
-            routeResponse.send(prefixAttached)
-        });
+        const query = routeRequest.body.ingredientPartialName;
+        unirest('GET', 'https://webknox-recipes.p.rapidapi.com/food/ingredients/autocomplete', RecipeApiHeader)
+            .query({query})
+            .end((res) => {
+                if (res.error) {
+                    routeResponse.status(404).send(res.error)
+                }
+                const PREFIX = `https://spoonacular.com/cdn/ingredients_500x500/`;
+                const prefixAttached = res.body.map(({image, ...rest}) => ({
+                    ...rest,
+                    imageUrl: image === 'no.jpg' ? null : PREFIX + image
+                }));
+                routeResponse.send(prefixAttached)
+            });
     })
 
 module.exports = ingredientAutoComplete;
