@@ -1,7 +1,6 @@
 import React from 'react';
 import {Helmet} from 'react-helmet';
 import styled from 'styled-components';
-import Typography from "@material-ui/core/Typography";
 import TypeIt from "typeit-react";
 
 const Wrapper = styled.div`
@@ -14,9 +13,9 @@ const Wrapper = styled.div`
 
 const StyledTypography = styled.h1`
     position: absolute;
-    font-size: 72px;
+    font-size: 64px;
     width: 480px;
-    top: 96px;
+    top: 124px;
     left: 40px;
 `
 
@@ -28,7 +27,7 @@ export const LandingPage = () => {
         </Helmet>
         <Wrapper>
             <StyledTypography>
-                Making Your
+                Manage Your
                 <TypeIt
                     options={{ loop: true }}
                     getBeforeInit={instance => {
@@ -36,10 +35,19 @@ export const LandingPage = () => {
                             .type("Pantry")
                             .pause(750)
                             .delete(6)
-                            .pause(500)
+                            .pause(250)
                             .type("Fridge")
                             .pause(750)
-                            .delete(6);
+                            .delete(6)
+                            .pause(250)
+                            .type("Recipes")
+                            .pause(750)
+                            .delete(7)
+                            .pause(250)
+                            .type("Shopping Lists")
+                            .pause(750)
+                            .delete(14)
+                            .pause(250)
                         // Remember to return it!
                         return instance;
                     }}
