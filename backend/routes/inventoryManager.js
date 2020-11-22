@@ -21,8 +21,9 @@ const inventoryManager = require("express").Router();
 inventoryManager
   .route("/inventory")
   .all((req, res, next) => {
-    if (req.params.userId || req.body.userId) return next();
-    if (!req.body.userId) return res.status(401).send();
+    // if (req.params.userId || req.body.userId) return next();
+    //   if (!req.body.userId) return res.status(401).send();
+    next();
   })
   .get((req, res) => {
     const { userId } = req.params;
@@ -38,7 +39,10 @@ inventoryManager
         if (docs.length === 0) {
           new InventoryItem({ userId, name, image, quantity }).save(
             (err, doc) => {
-              if (err) return res.status(400).send(err);
+              if (err) {
+                console.log(err);
+                return res.status(400).send(err);
+              }
               res.send(doc);
             }
           );
@@ -46,7 +50,10 @@ inventoryManager
           const targetDoc = docs[0];
           targetDoc.quantity += quantity;
           targetDoc.save((err, doc) => {
-            if (err) return res.status(400).send(err);
+            if (err) {
+              console.log(err);
+              return res.status(400).send(err);
+            }
             res.send(doc);
           });
         }
