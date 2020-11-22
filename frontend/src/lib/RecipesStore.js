@@ -19,6 +19,7 @@ export class RecipesStore {
     }
 
     recipes = null
+
     fetchRecipes = async () => {
         const {userId} = CurrentUserState.get()
         const {data} = await axios.post(`${BACK_END_URL}/recipe-recs`, {userId})

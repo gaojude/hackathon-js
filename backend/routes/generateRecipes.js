@@ -42,16 +42,18 @@ const completeRecipeFromApiSingleResponse = (singleResponse) => {
       if (res.error) {
         reject(res.error);
       }
-      const { sourceUrl, healthScore, preparationMinutes, cookingMinutes, creditsText } = res.body;
-      resolve({
-        ...partialRecipe,
-        sourceUrl,
-        healthScore,
-        preparationMinutes,
-        cookingMinutes,
-        creditsText,
-        missedIngredients: singleResponse.missedIngredients.map(extractFromMissedIngredient),
-      });
+      try {
+        const { sourceUrl, healthScore, preparationMinutes, cookingMinutes, creditsText } = res.body;
+        resolve({
+          ...partialRecipe,
+          sourceUrl,
+          healthScore,
+          preparationMinutes,
+          cookingMinutes,
+          creditsText,
+          missedIngredients: singleResponse.missedIngredients.map(extractFromMissedIngredient),
+        });
+      } catch (e) {}
     });
   });
 };
