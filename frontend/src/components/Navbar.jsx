@@ -1,8 +1,8 @@
 import React from "react";
-import { observer } from "mobx-react";
+import {observer} from "mobx-react";
 import styled from "styled-components";
 import Button from "@material-ui/core/Button";
-import { Spacer } from "./Layouts/Spacer";
+import {Spacer} from "./Layouts/Spacer";
 import Divider from "@material-ui/core/Divider";
 import {Link, useHistory} from "react-router-dom";
 import CurrentUserState from "../lib/CurrentUserState";
@@ -26,6 +26,15 @@ const ButtonGroup = styled.div`
     spacing: 8px;
     height: 32px;
 `;
+const DisplayFlex = styled.div`
+  display: flex;
+`;
+
+const ButtonGroupLeft = styled.div`
+  spacing: 10px;
+  height: 32px;
+  float: right;
+`;
 
 const StyledButton = styled(Button)`
   border: 1px solid #316186 !important;
@@ -33,45 +42,55 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledAvatar = styled(Avatar)`
-    margin-left: 16px;
-`
+  margin-left: 16px;
+`;
 
 const Navbar = () => {
-  const history = useHistory();
-  const { loggedInState, setLoggedIn } = CurrentUserState.get();
-  return (
-    <Wrapper>
-        <Link to="/">
-            <StyledAvatar alt="Remy Sharp" src="/assets/appicon.png"/>
-        </Link>
-      <ButtonGroup>
-        <Divider orientation="vertical" flexItem />
-        <Spacer width={8} />
-        {!loggedInState ? (
-          <>
-            <Button onClick={() => history.push("/login")}>Log in</Button>
-            <Spacer width={8} />
-            <StyledButton
-              onClick={() => history.push("/sign-up")}
-              variant="outlined"
-            >
-              Sign up
-            </StyledButton>
-            <Spacer width={8} />
-          </>
-        ) : (
-            <>
-              {CurrentUserState.get().userId}
-              <Button onClick={() => setLoggedIn(false, null)}>Log Out</Button>
-            </>
-        )}
-        <StyledButton variant="outlined" onClick={() => history.push("/home")}>
-          Demo
-        </StyledButton>
-        <Spacer width={16} />
-      </ButtonGroup>
-    </Wrapper>
-  );
+    const history = useHistory();
+    const {loggedInState, setLoggedIn} = CurrentUserState.get();
+    return (
+        <Wrapper>
+            <DisplayFlex>
+                <Link to="/">
+                    <StyledAvatar alt="Remy Sharp" src="/assets/appicon.png"/>
+                </Link>
+                {loggedInState ? (
+                    <ButtonGroupLeft>
+                        <Button onClick={() => history.push("/inventory")}>
+                            My Pantry
+                        </Button>
+                        <Button onClick={() => history.push("/recipes")}>Recipies</Button>
+                    </ButtonGroupLeft>
+                ) : (
+                    <></>
+                )}
+            </DisplayFlex>
+            <ButtonGroup>
+                <Divider orientation="vertical" flexItem/>
+                <Spacer width={8}/>
+                {!loggedInState ? (
+                    <>
+                        <Button onClick={() => history.push("/login")}>Log in</Button>
+                        <Spacer width={8}/>
+                        <StyledButton
+                            onClick={() => history.push("/sign-up")}
+                            variant="outlined"
+                        >
+                            Sign up
+                        </StyledButton>
+                        <Spacer width={8}/>
+                    </>
+                ) : <Button onClick={() => {
+                    setLoggedIn(false, null)
+                    history.push('/')
+                }}>Log Out</Button>}
+                <StyledButton variant="outlined" onClick={() => history.push("/home")}>
+                    Demo
+                </StyledButton>
+                <Spacer width={16}/>
+            </ButtonGroup>
+        </Wrapper>
+    );
 };
 
 export default observer(Navbar);

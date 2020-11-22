@@ -15,6 +15,7 @@ import MaterialTable from "material-table";
 import CurrentUserState from "../lib/CurrentUserState";
 import { BACK_END_URL } from "../consts/constants";
 import axios from "axios";
+import { InventoryStore } from "../lib/InventoryStore";
 
 const InventoryPage = () => {
   const { loggedInState, userId } = CurrentUserState.get();
@@ -56,15 +57,13 @@ const InventoryPage = () => {
   };
 
   async function fetchData() {
-    const { data } = await axios.post(`${BACK_END_URL}/inventory/list-all`, {
-      userId,
-    });
+    const data = await InventoryStore.get().fetchInventory();
     setData(data);
   }
 
   useEffect(() => {
     if (!data) fetchData();
-  }, [data, userId]); // Or [] if effect doesn't need props or state
+  }, [userId]); // Or [] if effect doesn't need props or state
 
   return (
     <div>
@@ -73,28 +72,39 @@ const InventoryPage = () => {
         columns={columns}
         data={data}
         editable={{
-          onRowUpdate: (newData, oldData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                const dataUpdate = [...data];
-                const index = oldData.tableData.id;
-                dataUpdate[index] = newData;
-                setData([...dataUpdate]);
-
-                resolve();
-              }, 1000);
-            }),
-          onRowDelete: (oldData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                const dataDelete = [...data];
-                const index = oldData.tableData.id;
-                dataDelete.splice(index, 1);
-                setData([...dataDelete]);
-
-                resolve();
-              }, 1000);
-            }),
+          onRowUpdate: async (newData, oldData) => {
+            const dataUpdate = [...data];
+            const index = oldData.tableData.id;
+            dataUpdate[index] = newData;
+            const { _id, userId, quantity } = newData;
+            if (quantity === 0) {
+              await axios.delete(`${BACK_END_URL}/inventory`, {
+                data: { userId, id: _id },
+              });
+              dataUpdate.splice(index, 1);
+              InventoryStore.get().setItems([...dataUpdate]);
+              setData([...dataUpdate]);
+            } else {
+              await axios.patch(`${BACK_END_URL}/inventory`, {
+                userId,
+                id: _id,
+                quantity,
+              });
+              InventoryStore.get().setItems([...dataUpdate]);
+              setData([...dataUpdate]);
+            }
+          },
+          onRowDelete: async (oldData) => {
+            const dataDelete = [...data];
+            const index = oldData.tableData.id;
+            dataDelete.splice(index, 1);
+            const { _id, userId } = oldData;
+            await axios.delete(`${BACK_END_URL}/inventory`, {
+              data: { userId, id: _id },
+            });
+            InventoryStore.get().setItems([...dataDelete]);
+            setData([...dataDelete]);
+          },
         }}
         actions={[
           {
@@ -117,9 +127,14 @@ const InventoryPage = () => {
         <DialogContent>
           {selectedIngredient !== undefined ? (
             <Avatar
-              style={{ textAlign: "center" }}
+              style={{
+                textAlign: "center",
+                margin: "auto",
+                height: "100px",
+                width: "100px",
+              }}
               maxInitials={1}
-              size={40}
+              size={300}
               round={true}
               src={selectedIngredient.imageUrl}
             />
@@ -149,7 +164,13 @@ const InventoryPage = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsModelOpen(false)} color="primary">
+          <Button
+            onClick={() => {
+              setIsModelOpen(false);
+              setIngredient(undefined);
+            }}
+            color="primary"
+          >
             Cancel
           </Button>
           <Button

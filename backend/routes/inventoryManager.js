@@ -1,4 +1,4 @@
-const { InventoryItem } = require('../database/models');
+const {InventoryItem} = require('../database/models');
 const inventoryManager = require('express').Router();
 
 /**
@@ -19,56 +19,52 @@ const inventoryManager = require('express').Router();
  */
 
 inventoryManager.post('/inventory/list-all', (req, res) => {
-  if (!req.body.userId) return res.status(401).send();
-  const { userId } = req.body;
-  InventoryItem.find({ userId })
-    .exec()
-    .then((docs) => res.send(docs));
+    if (!req.body.userId) return res.status(401).send();
+    const {userId} = req.body;
+    InventoryItem.find({userId})
+        .exec()
+        .then((docs) => res.send(docs));
 });
 
 inventoryManager
-  .route('/inventory')
-  .all((req, res, next) => {
-    if (req.body.userId) return next();
-    if (!req.body.userId) return res.status(401).send();
-  })
-  .post((req, res) => {
-    const { name, userId, image, quantity } = req.body;
-    InventoryItem.find({ userId, name })
-      .exec()
-      .then((docs) => {
-        if (docs.length === 0) {
-          new InventoryItem({ userId, name, image, quantity }).save((err, doc) => {
+    .route('/inventory')
+    .all((req, res, next) => {
+        if (req.body.userId) return next();
+        if (!req.body.userId) return res.status(401).send();
+    })
+    .post((req, res) => {
+        const {name, userId, image, quantity} = req.body;
+        InventoryItem.find({userId, name})
+            .exec()
+            .then((docs) => {
+                if (docs.length === 0) {
+                    new InventoryItem({userId, name, image, quantity}).save((err, doc) => {
+                        if (err) return res.status(400).send(err);
+                        res.send(doc);
+                    });
+                } else {
+                    const targetDoc = docs[0];
+                    targetDoc.quantity += quantity;
+                    targetDoc.save((err, doc) => {
+                        if (err) {
+                            return res.status(400).send(err);
+                        }
+                        res.send(doc);
+                    });
+                }
+            });
+    })
+    .delete((req, res) => {
+        const {id} = req.body;
+        InventoryItem.findByIdAndDelete(id).then((doc) => res.send(doc));
+    })
+    .patch((req, res) => {
+        const {id, quantity} = req.body;
+        if (quantity === 0) return res.status(400).send('Please use DELETE for setting quantity to 0.');
+        InventoryItem.findByIdAndUpdate(id, {quantity}, {new: true}, (err, doc) => {
             if (err) return res.status(400).send(err);
+            console.log(doc)
             res.send(doc);
-          });
-        } else {
-          const targetDoc = docs[0];
-          targetDoc.quantity += quantity;
-          targetDoc.save((err, doc) => {
-            if (err) {
-              console.log(err);
-              return res.status(400).send(err);
-            }
-            res.send(doc);
-          });
-        }
-      });
-  })
-  .delete((req, res) => {
-    const { id } = req.body;
-    InventoryItem.findByIdAndDelete(id).then((err, doc) => {
-      if (err) return res.status(400).send(err);
-      if (doc) return res.send(doc);
-      res.status(404).send();
+        });
     });
-  })
-  .patch((req, res) => {
-    const { id, quantity } = req.body;
-    if (quantity === 0) return res.status(400).send('Please use DELETE for setting quantity to 0.');
-    InventoryItem.findByIdAndUpdate(id, { quantity }, { new: true }, (err, doc) => {
-      if (err) return res.status(400).send(err);
-      res.send(doc);
-    });
-  });
 module.exports = inventoryManager;
