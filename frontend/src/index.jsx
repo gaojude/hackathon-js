@@ -8,6 +8,7 @@ import SignUpPage from "./pages/SignUpPage";
 import InventoryPage from "./pages/InventoryPage";
 import { HomePage } from "./pages/HomePage";
 import Navbar from "./components/Navbar";
+import {ImageRecognitionPage} from "./pages/ImageReco";
 
 const App = (
   <>
@@ -19,6 +20,8 @@ const App = (
         <Route path={"/inventory"} component={InventoryPage} />
         <Route exact path={"/"} component={LandingPage} />
         <Route path={"/home"} component={HomePage} />
+        <Route path={'/bulk-upload'} component={ImageRecognitionPage} />
+
       </div>
     </Router>
   </>
