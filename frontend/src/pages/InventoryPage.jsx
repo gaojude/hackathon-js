@@ -13,20 +13,20 @@ import {
 } from "@material-ui/core";
 import MaterialTable from "material-table";
 import CurrentUserState from "../lib/CurrentUserState";
-import { BACK_END_URL } from "../consts/constants";
-import axios from 'axios'
+import {BACK_END_URL} from "../consts/constants";
+import axios from "axios";
 
 const InventoryPage = () => {
     const {loggedInState, userId} = CurrentUserState.get();
     const [isModelOpen, setIsModelOpen] = useState(false);
     const [suggestion, setSuggestion] = useState([]);
     const [selectedIngredient, setIngredient] = useState(undefined);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(undefined);
     const [columns, setColumns] = useState([
         {
             title: "Image",
             render: (rowData) => (
-                <Avatar maxInitials={1} size={40} round={true} src={rowData.imageUrl}/>
+                <Avatar maxInitials={1} size={40} round={true} src={rowData.image}/>
             ),
         },
         {title: "Name", field: "name"},
@@ -39,22 +39,30 @@ const InventoryPage = () => {
             userId,
             image: selectedIngredient.imageUrl,
             quantity: 1,
-        })
-        setSuggestion(data);
+        });
+        console.log(data)
+        // fetchData(data);
     };
 
     const onSuggestionChange = async (ingredientPartialName) => {
-        const {data} = await axios.post(`${BACK_END_URL}/ingredient-auto-complete`, {ingredientPartialName})
+        const {data} = await axios.post(
+            `${BACK_END_URL}/ingredient-auto-complete`,
+            {
+                ingredientPartialName,
+            }
+        );
         setSuggestion(data);
     };
 
-    useEffect(() => {
-        async function fetchData() {
-            const {data} = await axios.post(`${BACK_END_URL}/inventory/list-all`, {userId})
-            setData(data);
-        }
+    async function fetchData() {
+        const {data} = await axios.post(`${BACK_END_URL}/inventory/list-all`, {
+            userId,
+        });
+        setData(data);
+    }
 
-        fetchData();
+    useEffect(() => {
+        if (!data) fetchData();
     }, [data, userId]); // Or [] if effect doesn't need props or state
 
     return (
@@ -124,7 +132,7 @@ const InventoryPage = () => {
                         onChange={(event) => {
                             suggestion !== []
                                 ? setIngredient(suggestion[event.target.value])
-                                : (setSuggestion([]));
+                                : setSuggestion([]);
                         }}
                         style={{width: 300}}
                         renderInput={(params) => (
