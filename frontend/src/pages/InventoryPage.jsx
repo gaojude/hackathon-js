@@ -1,31 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Modal from "@material-ui/core/Modal";
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField, Avatar } from "@material-ui/core";
 import MaterialTable from "material-table";
 import CurrentUserState from "../lib/CurrentUserState";
+import { INVENTORY_GET } from "../consts/constants";
 
 const InventoryPage = () => {
+  const { loggedInState, userID } = CurrentUserState.get();
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [columns, setColumns] = useState([
+    {
+      title: "Image",
+      render: (rowData) => (
+        <Avatar maxInitials={1} size={40} round={true} src={rowData.image} />
+      ),
+    },
     { title: "Name", field: "name" },
-    {
-      title: "Surname",
-      field: "surname",
-      initialEditValue: "initial edit value",
-    },
-    { title: "Birth Year", field: "birthYear", type: "numeric" },
-    {
-      title: "Birth Place",
-      field: "birthCity",
-      lookup: { 34: "İstanbul", 63: "Şanlıurfa" },
-    },
+    { title: "Quantity", field: "quantity", type: "numeric" },
   ]);
 
-  const [data, setData] = useState([
-    { name: "Mehmet", surname: "Baran", birthYear: 1987, birthCity: 63 },
-    { name: "Zerya Betül", surname: "Baran", birthYear: 2017, birthCity: 34 },
-  ]);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      // You can await here
+      const response = await fetch(INVENTORY_GET + `/${userID}`, {
+        method: "GET", // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const results = await response.json();
+      setData(results);
+    }
+    fetchData();
+  }, [data, userID]); // Or [] if effect doesn't need props or state
 
   return (
     <div>
