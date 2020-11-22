@@ -6,6 +6,12 @@ import {fromPromise} from 'mobx-utils';
 import singletonGetter from '../lib/singletonGetter'
 import {observer} from 'mobx-react'
 import MaterialTable from "material-table";
+import styled from "styled-components";
+import Button from "@material-ui/core/Button";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import {Spacer} from "../components/Layouts/Spacer";
+import {useDropzone} from 'react-dropzone'
+
 
 // xhr.open("POST", "https://app.nanonets.com/api/v2/OCR/Model/{{model_id}}/LabelFile/?async=true");
 //url : 'https://app.nanonets.com/api/v2/Inferences/Model/{{model_id}}/ImageLevelInferences/{{id}}',
@@ -18,6 +24,16 @@ const columns = [
     { field: 'name', headerName: 'Name', width: 70 },
     { field: 'score', headerName: 'Confidence', width: 130 },
 ];
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-begin;
+  height: 100vh;
+  width: 100%;
+  background-size: cover; 
+  align-items: center;
+`
 
 class ViewState {
     static get = singletonGetter(ViewState)
@@ -154,21 +170,35 @@ const ImageRecognitionPageInner = () => {
         })
     }
 
-        return <>
+        return <Wrapper>
             <Helmet>
                 <meta charSet="utf-8" />
                 <title>Upload Receipt | My Pantry Space</title>
             </Helmet>
+            <h1>Bulk Update</h1>
+            <h3>Upload a receipt using the button below to bulk update your inventory </h3>
+            <Spacer height={32}/>
             <div>
                 <input
+                    style={{display: 'none'}}
+                    accept="image/*"
                     id="upload-photo"
                     name="upload-photo"
                     type="file"
                     onChange={handleChange}
                 />
+                <label htmlFor="upload-photo">
+                    <Button
+                        startIcon={<CloudUploadIcon />}
+                        variant="contained"
+                        color="primary"
+                        component="span">
+                        Upload
+                    </Button>
+                </label>
             </div>
             { renderProgress() }
-        </>
+        </Wrapper>
 }
 
 export const ImageRecognitionPage = observer(ImageRecognitionPageInner);
