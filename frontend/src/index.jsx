@@ -1,21 +1,25 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react";
+import ReactDOM from "react-dom";
 import Counter from "./components/Counter";
-import { Route, BrowserRouter as Router } from 'react-router-dom'
-import {LandingPage} from "./pages/LandingPage";
-import {HomePage} from "./pages/HomePage";
-import {Navbar} from "./components/Navbar";
+import { Route, BrowserRouter as Router } from "react-router-dom";
+import { LandingPage } from "./pages/LandingPage";
+import { LogInPage } from "./pages/LogInPage";
+import { SignUpPage } from "./pages/SignUpPage";
+import { HomePage } from "./pages/HomePage";
+import { Navbar } from "./components/Navbar";
 
 const App = (
-    <>
-        <Router>
-            <Navbar />
-            <div className={'app'}>
-                <Route exact path={'/'} component={LandingPage} />
-                <Route path={'/home'} component={HomePage} />
-            </div>
-        </Router>
-    </>
+  <>
+    <Router>
+      <Navbar />
+      <div className={"app"}>
+        <Route path={"/login"} component={LogInPage} />
+        <Route path={"/sign-up"} component={SignUpPage} />
+        <Route exact path={"/"} component={LandingPage} />
+        <Route path={"/home"} component={HomePage} />
+      </div>
+    </Router>
+  </>
 );
 
-ReactDOM.render(App, document.getElementById('root'));
+ReactDOM.render(App, document.getElementById("root"));

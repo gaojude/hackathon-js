@@ -5,12 +5,11 @@ mongoose.connect(process.env.MONGO_DB, {
   useUnifiedTopology: true,
 });
 
-const login = (email, password) => {
-  let result = undefined;
-  // find each person with a last name matching 'Ghost', selecting the `name` and `occupation` fields
-  Account.findOne({ email: email, password: password }, function (err, person) {
-    result = person.name;
-  });
+const login = async (email, password) => {
+  const result = await Account.findOne({
+    email: email,
+    password: password,
+  }).exec();
   return result;
 };
 
