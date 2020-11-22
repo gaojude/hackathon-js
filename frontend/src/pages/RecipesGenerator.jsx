@@ -1,6 +1,9 @@
 import React from 'react';
 import {observer} from "mobx-react";
 import {RecipesStore} from "../lib/RecipesStore";
+import AliceCarousel from "react-alice-carousel";
+import {CarouselCard} from "../components/CarouselCard";
+import 'react-alice-carousel/lib/alice-carousel.css';
 
 const renderMissedIngredients = (missedIngredients) => {
     const matchDistance = missedIngredients.length;
@@ -43,26 +46,37 @@ const renderSingleRecipe = ({title, imageUrl, sourceUrl, missedIngredients}) => 
 }
 
 const RecipesGenerator = () => {
+    const handleDragStart = (e) => e.preventDefault();
+
     const {recipes} = RecipesStore.get();
     if (!recipes) {
         return (
             <h1>RECIPES RECS GENERATING...</h1>
         )
     }
+
     return (
         <div>
             <h1>Recipe recommendations</h1>
-            <ol>
-                {
-                    recipes.map((recipe, index) => {
-                        return (
-                            <div key={index}>
-                                {renderSingleRecipe(recipe)}
-                            </div>
-                        )
-                    })
-                }
-            </ol>
+            <AliceCarousel
+                mouseTracking
+                responsive ={{
+                    0: {items: 1},
+                    568: {items: 2},
+                    1024: {items: 3},
+                }}
+                items={recipes.map((recipe, index) => {
+                return (
+                    <CarouselCard
+                        key={index}
+                        onDragStart={handleDragStart}
+                        title={recipe.name}
+                        missedIngredients={recipe.missedIngredients}
+                        imageUrl={recipe.imageUrl}
+                        linkUrl={recipe.sourceUrl}
+                    />
+                )
+            })} />
         </div>
     );
 };

@@ -16,5 +16,6 @@ export class RecipesStore {
         const {userId} = CurrentUserState.get()
         const { data } = await axios.post(`${BACK_END_URL}/recipe-recs`, { userId })
         this.recipes = _.sortBy(data, 'matchDistance');
+        console.log(data)
     }
 }
