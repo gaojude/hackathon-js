@@ -5,6 +5,7 @@ import { Route, BrowserRouter as Router } from 'react-router-dom'
 import {LandingPage} from "./pages/LandingPage";
 import {HomePage} from "./pages/HomePage";
 import {Navbar} from "./components/Navbar";
+import {ImageRecognitionPage} from "./pages/ImageReco";
 
 const App = (
     <>
@@ -13,6 +14,7 @@ const App = (
             <div className={'app'}>
                 <Route exact path={'/'} component={LandingPage} />
                 <Route path={'/home'} component={HomePage} />
+                <Route path={'/test'} component={ImageRecognitionPage} />
             </div>
         </Router>
     </>
