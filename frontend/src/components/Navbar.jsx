@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import { Spacer } from "./Layouts/Spacer";
 import Divider from "@material-ui/core/Divider";
-import {Link, useHistory} from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import CurrentUserState from "../lib/CurrentUserState";
 import Avatar from "@material-ui/core/Avatar";
 
@@ -26,6 +26,15 @@ const ButtonGroup = styled.div`
     spacing: 8px;
     height: 32px;
 `;
+const DisplayFlex = styled.div`
+  display: flex;
+`;
+
+const ButtonGroupLeft = styled.div`
+  spacing: 10px;
+  height: 32px;
+  float: right;
+`;
 
 const StyledButton = styled(Button)`
   border: 1px solid #316186 !important;
@@ -33,17 +42,29 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledAvatar = styled(Avatar)`
-    margin-left: 16px;
-`
+  margin-left: 16px;
+`;
 
 const Navbar = () => {
   const history = useHistory();
   const { loggedInState, setLoggedIn } = CurrentUserState.get();
   return (
     <Wrapper>
+      <DisplayFlex>
         <Link to="/">
-            <StyledAvatar alt="Remy Sharp" src="/assets/appicon.png"/>
+          <StyledAvatar alt="Remy Sharp" src="/assets/appicon.png" />
         </Link>
+        {loggedInState ? (
+          <ButtonGroupLeft>
+            <Button onClick={() => history.push("/inventory")}>
+              My Pantry
+            </Button>
+            <Button onClick={() => history.push("/recipes")}>Recipies</Button>
+          </ButtonGroupLeft>
+        ) : (
+          <></>
+        )}
+      </DisplayFlex>
       <ButtonGroup>
         <Divider orientation="vertical" flexItem />
         <Spacer width={8} />
@@ -60,10 +81,10 @@ const Navbar = () => {
             <Spacer width={8} />
           </>
         ) : (
-            <>
-              {CurrentUserState.get().userId}
-              <Button onClick={() => setLoggedIn(false, null)}>Log Out</Button>
-            </>
+          <>
+            {CurrentUserState.get().userId}
+            <Button onClick={() => setLoggedIn(false, null)}>Log Out</Button>
+          </>
         )}
         <StyledButton variant="outlined" onClick={() => history.push("/home")}>
           Demo
