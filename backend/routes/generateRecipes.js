@@ -1,48 +1,15 @@
-/*
- interface SearchRecipesByIngredientsRequest {
-      * email: string;
-        ingredients: Ingredient[]
-    }
-
- interface AlmostMatchedRecipe {
-        recipe: Recipe
-        missedIngredients: Ingredient[]
-    }
-
- interface SearchRecipesByIngredientsResponse {
-        perfectlyMatchedRecipes: Recipe[]
-        almostMatchedRecipes: AlmostMatchedRecipe
-    }
- */
-
 const {RecipeApiHeader} = require("../api/recipe.api.config");
 const generateRecipes = require("express").Router();
 const unirest = require('unirest');
+const {InventoryItem} = require("../database/models");
 
-const getInventoryByEmail = (email) => {
-    const INVENTORY = {
-        ingredients: [
-            {
-                name: "chicken"
-            },
-            {
-                name: "egg"
-            },
-            {
-                name: 'banana'
-            },
-            {
-                name: "milk"
-            },
-            {
-                name: 'tomato'
-            },
-            {
-                name: 'potato'
-            }
-        ]
-    }
-    return INVENTORY;
+const getInventoryByUserId = (userId) => {
+    return new Promise((resolve, reject) => {
+        InventoryItem.find({userId}, (err, docs) => {
+            if (err) reject(err);
+            resolve(docs)
+        })
+    })
 }
 
 const extractRecipeFromApiResponse = (data) => {
@@ -67,8 +34,7 @@ const extractFromMissedIngredient = (missedIngredient) => {
 const completeRecipeFromApiSingleResponse = (singleResponse) => {
     return new Promise((resolve, reject) => {
         const partialRecipe = extractRecipeFromApiResponse(singleResponse);
-        unirest('GET', `https://webknox-recipes.p.rapidapi.com/recipes/${partialRecipe.recipeId}/information`)
-            .headers(RecipeApiHeader)
+        unirest('GET', `https://webknox-recipes.p.rapidapi.com/recipes/${partialRecipe.recipeId}/information`, RecipeApiHeader)
             .end(res => {
                 if (res.error) {
                     reject(res.error)
@@ -94,24 +60,24 @@ const completeRecipeFromApiSingleResponse = (singleResponse) => {
 }
 
 generateRecipes
-    .route("/recipes-recs")
+    .route("/recipe-recs")
     .post((routeRequest, routeResponse) => {
-        if (!routeRequest.body.email) {
-            routeResponse.status(400).send()
-        }
-        const {email} = routeRequest.body;
-        const ingredients = getInventoryByEmail(email).ingredients.map(ingredient => ingredient.name).join(', ')
-        unirest('GET', 'https://webknox-recipes.p.rapidapi.com/recipes/findByIngredients')
-            .headers(RecipeApiHeader)
-            .query({
-                ingredients,
-                number: '10'
-            })
-            .end((res) => {
-                const singleRecipeResponses = res.body;
-                Promise
-                    .all(singleRecipeResponses.map(completeRecipeFromApiSingleResponse))
-                    .then(values => routeResponse.send(values))
+        const {userId} = routeRequest.body;
+        getInventoryByUserId(userId)
+            .then(ingredients => ingredients.map(ingredient => ingredient.name).join(', '))
+            .then(encodedIngredients => {
+                unirest('GET', 'https://webknox-recipes.p.rapidapi.com/recipes/findByIngredients')
+                    .headers(RecipeApiHeader)
+                    .query({
+                        ingredients: encodedIngredients,
+                        number: '20'
+                    })
+                    .end((request) => {
+                        const singleRecipeResponses = request.body;
+                        Promise
+                            .all(singleRecipeResponses.map(completeRecipeFromApiSingleResponse))
+                            .then(values => routeResponse.send(values))
+                    })
             })
     })
 

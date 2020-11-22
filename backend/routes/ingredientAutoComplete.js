@@ -1,5 +1,5 @@
 const {RecipeApiHeader} = require("../api/recipe.api.config");
-const apiRequest = require('unirest')('GET', 'https://webknox-recipes.p.rapidapi.com/food/ingredients/autocomplete');
+const unirest = require('unirest')
 
 /*
     interface AutoCompleteIngredientRequest {
@@ -20,8 +20,7 @@ ingredientAutoComplete
             routeResponse.status(400).send()
         }
         const query = routeRequest.body.ingredientPartialName;
-        apiRequest
-            .headers(RecipeApiHeader)
+        unirest('GET', 'https://webknox-recipes.p.rapidapi.com/food/ingredients/autocomplete', RecipeApiHeader)
             .query({query})
             .end((res) => {
                 if (res.error) {

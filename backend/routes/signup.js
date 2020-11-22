@@ -1,5 +1,5 @@
 const signUpRouter = require("express").Router();
-const {signUp} = require("../database/login");
+const {signUp} = require("../database/models");
 signUpRouter
     .route("/signup")
     .post((req, res) => {
