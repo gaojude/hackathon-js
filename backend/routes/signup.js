@@ -4,7 +4,7 @@ signUpRouter.route("/signup").post(async (req, res) => {
   if (!req.body) return res.status(401).send();
   const { name, email, password } = req.body;
   signUp(name.trim(), email.trim(), password.trim());
-  const person = await login(email.trim(), password.trim());
+  const person = await signUp(email.trim(), password.trim());
   if (person) {
     res.send({ name: person.name, email, success: true, _id: person._id });
     return;
