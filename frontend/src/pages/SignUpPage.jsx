@@ -23,7 +23,7 @@ const SignUpPage = () => {
       }), // body data type must match "Content-Type" header
     });
     const results = await response.json();
-    setLoggedIn(results.success);
+    setLoggedIn(results.success, results._id);
     if (results.success) {
       history.push("/");
     }

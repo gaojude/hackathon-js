@@ -7,7 +7,6 @@ logInRouter.route("/login").post(async (req, res) => {
   }
   const { email, password } = req.body;
   const person = await login(email.trim(), password.trim());
-  console.log(person);
   if (person) {
     res.send({ name: person.name, email, success: true, _id: person._id });
     return;
