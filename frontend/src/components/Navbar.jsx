@@ -33,7 +33,7 @@ const StyledButton = styled(Button)`
 
 const Navbar = () => {
   const history = useHistory();
-  const { loggedInState } = CurrentUserState.get();
+  const { loggedInState, setLoggedIn } = CurrentUserState.get();
   return (
     <Wrapper>
       <ButtonGroup>
@@ -52,7 +52,7 @@ const Navbar = () => {
             <Spacer width={8} />
           </>
         ) : (
-          <Button onClick={() => history.push("/home")}>Log Out</Button>
+          <Button onClick={() => setLoggedIn(false)}>Log Out</Button>
         )}
         <StyledButton variant="outlined" onClick={() => history.push("/home")}>
           Demo
