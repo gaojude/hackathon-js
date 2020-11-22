@@ -4,15 +4,20 @@ import singletonGetter from "./singletonGetter";
 export default class CurrentUserState {
   static get = singletonGetter(CurrentUserState);
   loggedInState = false;
+  userID;
 
   constructor() {
-    const session = localStorage.getItem("session");
-    this.loggedInState = session;
     makeAutoObservable(this);
+    const session = JSON.parse(localStorage.getItem("session"));
+    if (session) this.setLoggedIn(session.isSignedIn, session.userID);
   }
 
-  setLoggedIn = (loggedIn) => {
+  setLoggedIn = (loggedIn, uId) => {
     this.loggedInState = loggedIn;
-    localStorage.setItem("session", loggedIn);
+    this.userID = uId;
+    localStorage.setItem(
+      "session",
+      JSON.stringify({ isSignedIn: loggedIn, userID: uId })
+    );
   };
 }
