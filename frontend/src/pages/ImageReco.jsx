@@ -5,6 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import {fromPromise} from 'mobx-utils';
 import singletonGetter from '../lib/singletonGetter'
 import {observer} from 'mobx-react'
+import MaterialTable from "material-table";
 
 // xhr.open("POST", "https://app.nanonets.com/api/v2/OCR/Model/{{model_id}}/LabelFile/?async=true");
 //url : 'https://app.nanonets.com/api/v2/Inferences/Model/{{model_id}}/ImageLevelInferences/{{id}}',
@@ -12,6 +13,11 @@ import {observer} from 'mobx-react'
 const modalID = '0b57a751-2753-4859-b71a-41eb1d14d5a0';
 const url = `https://app.nanonets.com/api/v2/OCR/Model/${modalID}`;
 const inference_url = `https://app.nanonets.com/api/v2/Inferences/Model/${modalID}`;
+
+const columns = [
+    { field: 'name', headerName: 'Name', width: 70 },
+    { field: 'score', headerName: 'Confidence', width: 130 },
+];
 
 class ViewState {
     static get = singletonGetter(ViewState)
@@ -33,7 +39,6 @@ const blackList = [
 const parseTable = (table) => {
     let retVal = []
 
-    console.log(table.cells)
     for (const i in table.cells) {
         const x = table.cells[i];
         if (x.hasOwnProperty('label') &&
@@ -48,8 +53,6 @@ const parseTable = (table) => {
             });
         }
     }
-
-    console.log(retVal)
 
     return retVal;
 }
@@ -69,13 +72,14 @@ const parseData = (toParse) => {
                 if (x.label === 'Merchant_Name' && x.hasOwnProperty('ocr_text')) {
                     resultMap.merchantName = x.ocr_text
                 } else if (x.hasOwnProperty('type') && x.type === 'table') {
-                    result.items = parseTable(x);
+                    resultMap.items = parseTable(x);
                 }
             }
         }
 
-        console.log(resultMap) ;
+        console.log(resultMap)
 
+        return resultMap;
     }
 }
 
@@ -140,7 +144,12 @@ const ImageRecognitionPageInner = () => {
         return ViewState.get().inferenceResponse.case({
             pending: (_) => <CircularProgress/>,
             fulfilled: t => {
-                return isLoading ? <CircularProgress/> : <div>{JSON.stringify(t)}</div>
+                const parsed = parseData(t)
+                return isLoading ? <CircularProgress/> : <div>
+                    <MaterialTable
+                        title={`We found the following item on the ${parsed.merchantName} receipt`}
+                        data={parsed.items} columns={columns} pageSize={5} checkboxSelection />
+                </div>
             },
         })
     }

@@ -20,7 +20,7 @@ const App = (
         <Route path={"/inventory"} component={InventoryPage} />
         <Route exact path={"/"} component={LandingPage} />
         <Route path={"/home"} component={HomePage} />
-        <Route path={'/test'} component={ImageRecognitionPage} />
+        <Route path={'/bulk-upload'} component={ImageRecognitionPage} />
 
       </div>
     </Router>
