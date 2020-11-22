@@ -7,6 +7,6 @@ signUpRouter.route("/signup").post((req, res) => {
   }
   const { name, email, password } = req.body;
   signUp(name.trim(), email.trim(), password.trim());
-  res.send({ name, email });
+  res.send({ name, email, success: true });
 });
 module.exports = signUpRouter;

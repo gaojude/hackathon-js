@@ -3,10 +3,10 @@ import ReactDOM from "react-dom";
 import Counter from "./components/Counter";
 import { Route, BrowserRouter as Router } from "react-router-dom";
 import { LandingPage } from "./pages/LandingPage";
-import { LogInPage } from "./pages/LogInPage";
-import { SignUpPage } from "./pages/SignUpPage";
+import LogInPage from "./pages/LogInPage";
+import SignUpPage from "./pages/SignUpPage";
 import { HomePage } from "./pages/HomePage";
-import { Navbar } from "./components/Navbar";
+import Navbar from "./components/Navbar";
 
 const App = (
   <>

@@ -1,26 +1,34 @@
 import React from "react";
+import { observer } from "mobx-react";
 import { Button, TextField } from "@material-ui/core";
 import { Helmet } from "react-helmet";
-const { LOG_IN } = require("../consts/constants");
+import { LOG_IN } from "../consts/constants";
+import { useHistory } from "react-router-dom";
+import CurrentUserState from "../lib/CurrentUserState";
 
-const LogInRequest = async (event) => {
-  //const { setLoggedIn } = CurrentUserState.get();
-  event.preventDefault();
-  const response = await fetch(LOG_IN, {
-    method: "POST", // *GET, POST, PUT, DELETE, etc.
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: event.target[0].value,
-      password: event.target[1].value,
-    }), // body data type must match "Content-Type" header
-  });
-  const results = await response.json();
-  //setLoggedIn(results.success);
-};
+const LogInPage = () => {
+  const history = useHistory();
 
-export const LogInPage = () => {
+  const LogInRequest = async (event) => {
+    event.preventDefault();
+    const { setLoggedIn } = CurrentUserState.get();
+    const response = await fetch(LOG_IN, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: event.target[0].value,
+        password: event.target[1].value,
+      }),
+    });
+    const results = await response.json();
+    setLoggedIn(results.success);
+    if (results.success) {
+      history.push("/");
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -46,3 +54,4 @@ export const LogInPage = () => {
     </>
   );
 };
+export default observer(LogInPage);
