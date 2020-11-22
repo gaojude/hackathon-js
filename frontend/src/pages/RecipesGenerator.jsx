@@ -52,7 +52,7 @@ const RecipesGenerator = () => {
 
     useEffect(() => {
         RecipesStore.get().fetchRecipes()
-    }, [recipes])
+    }, [])
 
     if (!recipes) {
         return (
@@ -63,6 +63,7 @@ const RecipesGenerator = () => {
     return (
         <div>
             <h1>Recipe recommendations</h1>
+
             <AliceCarousel
                 mouseTracking
                 responsive={{
@@ -70,18 +71,20 @@ const RecipesGenerator = () => {
                     568: {items: 2},
                     1024: {items: 3},
                 }}
-                items={recipes.map((recipe) => {
+                items={recipes.map((recipe, index) => {
                     return (
                         <CarouselCard
-                            key={recipe.recipeId}
+                            key={index}
                             onDragStart={handleDragStart}
-                            title={recipe.name}
+                            title={recipe.title}
                             missedIngredients={recipe.missedIngredients}
                             imageUrl={recipe.imageUrl}
                             linkUrl={recipe.sourceUrl}
+                            score={recipe.healthScore}
                         />
                     )
-                })}/>
+                })}
+            />
         </div>
     );
 };

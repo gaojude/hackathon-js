@@ -62,8 +62,8 @@ const InventoryPage = () => {
   }
 
   useEffect(() => {
-    if (!data) fetchData();
-  }, [userId]); // Or [] if effect doesn't need props or state
+    fetchData();
+  }, []); // Or [] if effect doesn't need props or state
 
   return (
     <div>
