@@ -80,7 +80,10 @@ const Navbar = () => {
                         </StyledButton>
                         <Spacer width={8}/>
                     </>
-                ) : <Button onClick={() => setLoggedIn(false, null)}>Log Out</Button>}
+                ) : <Button onClick={() => {
+                    setLoggedIn(false, null)
+                    history.push('/')
+                }}>Log Out</Button>}
                 <StyledButton variant="outlined" onClick={() => history.push("/home")}>
                     Demo
                 </StyledButton>
