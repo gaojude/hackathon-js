@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {observer} from "mobx-react";
 import {RecipesStore} from "../lib/RecipesStore";
 import AliceCarousel from "react-alice-carousel";
@@ -49,6 +49,11 @@ const RecipesGenerator = () => {
     const handleDragStart = (e) => e.preventDefault();
 
     const {recipes} = RecipesStore.get();
+
+    useEffect(() => {
+        RecipesStore.get().fetchRecipes()
+    }, [recipes])
+
     if (!recipes) {
         return (
             <h1>RECIPES RECS GENERATING...</h1>
@@ -60,23 +65,23 @@ const RecipesGenerator = () => {
             <h1>Recipe recommendations</h1>
             <AliceCarousel
                 mouseTracking
-                responsive ={{
+                responsive={{
                     0: {items: 1},
                     568: {items: 2},
                     1024: {items: 3},
                 }}
-                items={recipes.map((recipe, index) => {
-                return (
-                    <CarouselCard
-                        key={index}
-                        onDragStart={handleDragStart}
-                        title={recipe.name}
-                        missedIngredients={recipe.missedIngredients}
-                        imageUrl={recipe.imageUrl}
-                        linkUrl={recipe.sourceUrl}
-                    />
-                )
-            })} />
+                items={recipes.map((recipe) => {
+                    return (
+                        <CarouselCard
+                            key={recipe.recipeId}
+                            onDragStart={handleDragStart}
+                            title={recipe.name}
+                            missedIngredients={recipe.missedIngredients}
+                            imageUrl={recipe.imageUrl}
+                            linkUrl={recipe.sourceUrl}
+                        />
+                    )
+                })}/>
         </div>
     );
 };

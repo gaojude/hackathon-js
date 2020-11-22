@@ -11,7 +11,6 @@ import {ImageRecognitionPage} from "./pages/ImageReco";
 import RecipesGenerator from "./pages/RecipesGenerator";
 import {Spacer} from "./components/Layouts/Spacer";
 import CurrentUserState from "./lib/CurrentUserState";
-import {observer} from "mobx-react";
 
 const withAuth = Component => (props) => {
     if (!CurrentUserState.get().userId || !CurrentUserState.get().loggedInState) {
