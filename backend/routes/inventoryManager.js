@@ -46,7 +46,10 @@ inventoryManager
           const targetDoc = docs[0];
           targetDoc.quantity += quantity;
           targetDoc.save((err, doc) => {
-            if (err) return res.status(400).send(err);
+            if (err) {
+              console.log(err);
+              return res.status(400).send(err);
+            }
             res.send(doc);
           });
         }

@@ -1,7 +1,10 @@
+html {
+    font-family: 'Raleway', sans-serif !important;
+}
+
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Raleway', sans-serif;
     -moz-osx-font-smoothing: grayscale;
 }
 
